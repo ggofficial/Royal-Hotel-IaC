@@ -1,0 +1,31 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+
+# Variables
+terraform.tfvars
+
+# SSH Keys
+*.pem
+
+# AWS
+.aws/
+
+# Ansible
+*.retry
+
+# Inventory (generated dynamically by Jenkins)
+inventory
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

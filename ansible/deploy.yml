@@ -1,0 +1,51 @@
+---
+- name: Deploy Royal Hotel Website
+  hosts: webserver
+  become: yes
+
+  vars_files:
+    - vars.yml
+
+  tasks:
+
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install Nginx
+      apt:
+        name: nginx
+        state: present
+
+    - name: Create application directory
+      file:
+        path: "{{ document_root }}/{{ app_root }}"
+        state: directory
+        mode: "0755"
+
+    - name: Copy website files
+      copy:
+        src: website/
+        dest: "{{ document_root }}/{{ app_root }}/"
+
+    - name: Deploy Nginx configuration
+      template:
+        src: templates/nginx.conf.j2
+        dest: "{{ nginx_conf_dir }}/royal-hotel"
+
+    - name: Enable website
+      file:
+        src: "{{ nginx_conf_dir }}/royal-hotel"
+        dest: /etc/nginx/sites-enabled/royal-hotel
+        state: link
+
+    - name: Remove default Nginx site
+      file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+
+    - name: Restart Nginx
+      service:
+        name: nginx
+        state: restarted
+        enabled: yes

@@ -1,0 +1,4 @@
+document_root: /var/www/html
+app_root: RoyalHotel
+nginx_conf_dir: /etc/nginx/sites-available
+server_port: 80
