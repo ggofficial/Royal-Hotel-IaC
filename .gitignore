@@ -1,31 +1,26 @@
 # Terraform
-.terraform/
-*.tfstate
-*.tfstate.*
-.terraform.lock.hcl
+terraform/.terraform/
+terraform/.terraform.lock.hcl
+terraform/*.tfstate
+terraform/*.tfstate.*
+terraform/tfplan
 
-# Variables
-terraform.tfvars
-
-# SSH Keys
+# Sensitive files
+terraform/*.pem
 *.pem
 
-# AWS
-.aws/
+# Terraform variable files
 
-# Ansible
-*.retry
-
-# Inventory (generated dynamically by Jenkins)
-inventory
+# Jenkins
+.jenkins/
 
 # Logs
 *.log
 
-# IDE
-.vscode/
-.idea/
-
-# OS
+# OS files
 .DS_Store
 Thumbs.db
+
+# Python
+__pycache__/
+*.pyc
