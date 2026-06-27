@@ -8,7 +8,6 @@ pipeline {
     }
 
     environment {
-        TF_DIR = "terraform"
         ANSIBLE_DIR = "ansible"
     }
 
@@ -20,20 +19,25 @@ pipeline {
             }
         }
 
+        stage('Copy Terraform Outputs') {
+            steps {
+                copyArtifacts(
+                    projectName: 'Royal-Hotel-Infrastructure',
+                    selector: lastSuccessful()
+                )
+            }
+        }
+
         stage('Generate Inventory') {
             steps {
                 script {
-                    dir("${TF_DIR}") {
-                        sh 'terraform output -raw public_ip > ../public_ip.txt'
-                    }
 
-                    script {
-                        def ip = readFile('public_ip.txt').trim()
+                    def json = readJSON file: 'terraform-output.json'
+                    def ip = json.public_ip.value
 
-                        writeFile file: 'ansible/inventory', text: """[webserver]
+                    writeFile file: 'ansible/inventory', text: """[webserver]
 ${ip} ansible_user=ubuntu ansible_ssh_private_key_file=/home/ubuntu/.ssh/royal-key.pem
 """
-                    }
                 }
             }
         }
@@ -57,26 +61,28 @@ ${ip} ansible_user=ubuntu ansible_ssh_private_key_file=/home/ubuntu/.ssh/royal-k
         stage('Verify Deployment') {
             steps {
                 script {
-                    def ip = readFile('public_ip.txt').trim()
-                    sh "curl http://${ip}"
+
+                    def json = readJSON file: 'terraform-output.json'
+                    def ip = json.public_ip.value
+
+                    sh "curl -I http://${ip}"
                 }
             }
         }
-
     }
 
     post {
 
         success {
-            echo '================================='
-            echo 'Website Deployment Successful'
-            echo '================================='
+            echo "=================================="
+            echo "Website Deployment Successful"
+            echo "=================================="
         }
 
         failure {
-            echo '================================='
-            echo 'Deployment Failed'
-            echo '================================='
+            echo "=================================="
+            echo "Website Deployment Failed"
+            echo "=================================="
         }
     }
 }
