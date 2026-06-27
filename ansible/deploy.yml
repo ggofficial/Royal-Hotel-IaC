@@ -25,7 +25,7 @@
 
     - name: Copy website files
       copy:
-        src: website/
+        src: ../website/
         dest: "{{ document_root }}/{{ app_root }}/"
 
     - name: Deploy Nginx configuration
