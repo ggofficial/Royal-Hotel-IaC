@@ -32,7 +32,7 @@ pipeline {
             steps {
                 script {
 
-                    def json = readJSON file: 'terraform/terraform-output.json''
+                    def json = readJSON file: 'terraform/terraform-output.json'
                     def ip = json.public_ip.value
 
                     writeFile file: 'ansible/inventory', text: """[webserver]
